@@ -4,6 +4,8 @@ Innenarchitektur-Portfolio (Next.js, TypeScript, Tailwind CSS).
 
 ```bash
 npm install
+
+##localhost starten##
 npm run dev
 ```
 

@@ -1,3 +1,5 @@
+import ProjekteCarousel from "./projekte-carousel";
+
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col justify-between p-8 md:p-16">
@@ -13,6 +15,8 @@ export default function Home() {
           Räume, die man fühlt. Das Portfolio entsteht gerade.
         </p>
       </section>
+
+      <ProjekteCarousel />
 
       <footer className="text-sm opacity-50">
         © {new Date().getFullYear()} — in Arbeit
