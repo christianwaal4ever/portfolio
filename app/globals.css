@@ -1,11 +1,28 @@
 @import "tailwindcss";
 
-:root {
-  --background: #f4f1ec;
-  --foreground: #1c1b19;
+/*
+ * Design-Tokens: Farben und Schrift an einer Stelle.
+ * Tailwind macht daraus Klassen wie bg-bg, text-fg, text-muted, border-line, bg-accent …
+ */
+@theme {
+  --color-bg: #f4f1ec;      /* Hintergrund (warmes Off-White) */
+  --color-surface: #ebe6de; /* Karten, Platzhalter */
+  --color-fg: #1c1b19;      /* Haupttext */
+  --color-muted: #6b665e;   /* Nebentext */
+  --color-line: #d6d0c5;    /* Linien, Rahmen */
+  --color-accent: #8a5a3b;  /* Akzent (Terrakotta) */
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-bg);
+  color: var(--color-fg);
+}
+
+/* Abstand beim Springen zu Ankern, damit der Sticky-Header nichts verdeckt */
+section[id] {
+  scroll-margin-top: 5rem;
 }

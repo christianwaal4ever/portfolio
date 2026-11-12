@@ -1,26 +1,26 @@
-import ProjekteCarousel from "./projekte-carousel";
+import Header from "./components/header";
+import Hero from "./components/hero";
+import Projekte from "./components/projekte";
+import Lebenslauf from "./components/lebenslauf";
+import Kontakt from "./components/kontakt";
+import { person } from "./daten";
 
+// Single-Page-Aufbau: Reihenfolge der Sections hier festlegen
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col justify-between p-8 md:p-16">
-      <header className="text-sm uppercase tracking-[0.3em]">
-        Christian Waal
-      </header>
-
-      <section>
-        <h1 className="text-5xl font-light leading-tight md:text-8xl">
-          Innen&shy;architektur
-        </h1>
-        <p className="mt-6 max-w-md text-lg opacity-70">
-          Räume, die man fühlt. Das Portfolio entsteht gerade.
-        </p>
-      </section>
-
-      <ProjekteCarousel />
-
-      <footer className="text-sm opacity-50">
-        © {new Date().getFullYear()} — in Arbeit
+    <>
+      <Header />
+      <main>
+        <Hero />
+        <Projekte />
+        <Lebenslauf />
+        <Kontakt />
+      </main>
+      <footer className="border-t border-line">
+        <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-muted md:px-8">
+          © {new Date().getFullYear()} {person.name}
+        </div>
       </footer>
-    </main>
+    </>
   );
 }

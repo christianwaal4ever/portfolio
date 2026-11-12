@@ -1,12 +1,18 @@
 # portfolio-christan
 
-Innenarchitektur-Portfolio (Next.js, TypeScript, Tailwind CSS).
+1. Node.js installieren: https://nodejs.org (Button „LTS“), danach Terminal neu öffnen
+2. Im Projektordner:
 
 ```bash
 npm install
-
-##localhost starten##
 npm run dev
-```
 
-Dann http://localhost:3000 öffnen.
+cd ~/Desktop/portfolio-christan
+npm run dev
+
+echo 'export PATH="$HOME/.local/node/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
+
+
+3. Öffnen: http://localhost:3000
+
+Eigene Inhalte: `app/daten.ts`
