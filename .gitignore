@@ -12,3 +12,6 @@ next-env.d.ts
 .venv
 venv
 env
+
+# Originalmaterial (lokal archiviert, nicht ins Repo). Web-Kopien liegen in public/
+portfolio_material/

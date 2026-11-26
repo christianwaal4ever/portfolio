@@ -16,3 +16,5 @@ echo 'export PATH="$HOME/.local/node/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
 3. Öffnen: http://localhost:3000
 
 Eigene Inhalte: `app/daten.ts`
+
+daten.ts ´darunter im Ordner neue Bilder einfügen`

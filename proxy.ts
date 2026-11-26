@@ -22,7 +22,9 @@ export async function proxy(request: NextRequest) {
   return NextResponse.redirect(new URL("/login", request.url));
 }
 
-// Alles schützen außer interne Next.js-Dateien und das Favicon
+// Alles schützen außer interne Next.js-Dateien, Favicon und Bilddateien unter /bilder/.
+// /bilder/ muss offen sein, weil die Bildoptimierung von Next.js die Originale
+// intern ohne Login-Cookie abruft. Seiten und Texte bleiben geschützt.
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|icon.svg|bilder/).*)"],
 };

@@ -1,0 +1,290 @@
+{
+ "/bilder/01/ansicht-01.jpg": [
+  3200,
+  1143
+ ],
+ "/bilder/01/architektonische-idee.png": [
+  1400,
+  1988
+ ],
+ "/bilder/01/aufbau-elemente.jpg": [
+  2400,
+  3405
+ ],
+ "/bilder/01/aula-cubus.jpg": [
+  1920,
+  1080
+ ],
+ "/bilder/01/besonderheiten.png": [
+  1400,
+  1196
+ ],
+ "/bilder/01/blick-auf-die-kunstschule.jpg": [
+  1920,
+  1080
+ ],
+ "/bilder/01/cubus-og-innen.jpg": [
+  1920,
+  1080
+ ],
+ "/bilder/01/grundriss-eg.jpg": [
+  3200,
+  2263
+ ],
+ "/bilder/01/grundriss-og.jpg": [
+  3200,
+  2263
+ ],
+ "/bilder/01/iso-bestand.jpg": [
+  2400,
+  1715
+ ],
+ "/bilder/01/italien.jpg": [
+  1344,
+  1063
+ ],
+ "/bilder/01/konzept.jpg": [
+  1440,
+  1421
+ ],
+ "/bilder/01/lageplan.jpg": [
+  2400,
+  3394
+ ],
+ "/bilder/01/schnitte.jpg": [
+  2400,
+  1106
+ ],
+ "/bilder/01/titel.jpg": [
+  2800,
+  1421
+ ],
+ "/bilder/01/verbindung.png": [
+  1400,
+  1224
+ ],
+ "/bilder/01/vor-ort-1.jpg": [
+  2400,
+  1800
+ ],
+ "/bilder/01/vor-ort-2.jpg": [
+  1600,
+  2133
+ ],
+ "/bilder/01/vor-ort-3.jpg": [
+  1600,
+  2133
+ ],
+ "/bilder/02/grundriss-ansicht.jpg": [
+  1283,
+  1596
+ ],
+ "/bilder/02/skizze-1.jpg": [
+  2400,
+  1742
+ ],
+ "/bilder/02/skizze-2.jpg": [
+  2400,
+  1730
+ ],
+ "/bilder/02/skizze-3.jpg": [
+  2400,
+  1730
+ ],
+ "/bilder/02/tannenzapfen.jpg": [
+  1600,
+  2400
+ ],
+ "/bilder/02/titel.jpg": [
+  1920,
+  1080
+ ],
+ "/bilder/02/zustaende.jpg": [
+  1114,
+  3192
+ ],
+ "/bilder/02/zustand-geschlossen.jpg": [
+  747,
+  770
+ ],
+ "/bilder/02/zustand-offen.jpg": [
+  934,
+  777
+ ],
+ "/bilder/02/zustand-transparent.jpg": [
+  747,
+  717
+ ],
+ "/bilder/03/ansicht-1.jpg": [
+  2400,
+  501
+ ],
+ "/bilder/03/ansicht-2.jpg": [
+  2400,
+  501
+ ],
+ "/bilder/03/balkon.jpg": [
+  1920,
+  1080
+ ],
+ "/bilder/03/fahrradpavillon.jpg": [
+  1920,
+  1080
+ ],
+ "/bilder/03/grundriss-a.jpg": [
+  2400,
+  938
+ ],
+ "/bilder/03/grundriss-c.jpg": [
+  2164,
+  898
+ ],
+ "/bilder/03/isometrie.jpg": [
+  2400,
+  1091
+ ],
+ "/bilder/03/lageplan.png": [
+  3000,
+  2109
+ ],
+ "/bilder/03/schnitt-a-a.jpg": [
+  2400,
+  551
+ ],
+ "/bilder/03/schnitt-a-b.jpg": [
+  2400,
+  564
+ ],
+ "/bilder/03/schnitt-c-c.jpg": [
+  2400,
+  1460
+ ],
+ "/bilder/03/terrasse.jpg": [
+  1920,
+  1080
+ ],
+ "/bilder/03/titel.jpg": [
+  1920,
+  1080
+ ],
+ "/bilder/04/ansichten-grundriss.jpg": [
+  2201,
+  2115
+ ],
+ "/bilder/04/balenciaga-qualitaeten.jpg": [
+  2400,
+  1248
+ ],
+ "/bilder/04/bauteile.jpg": [
+  1273,
+  2175
+ ],
+ "/bilder/04/isometrie.jpg": [
+  2400,
+  2969
+ ],
+ "/bilder/04/prototyp.jpg": [
+  1800,
+  2276
+ ],
+ "/bilder/04/titel.jpg": [
+  1920,
+  1080
+ ],
+ "/bilder/04/varianten.jpg": [
+  2400,
+  2517
+ ],
+ "/bilder/04/verbinder.jpg": [
+  846,
+  776
+ ],
+ "/bilder/05/aesthetische-qualitaeten.png": [
+  1400,
+  1341
+ ],
+ "/bilder/05/atmosphaerische-qualitaeten.png": [
+  1400,
+  1917
+ ],
+ "/bilder/05/lapis-infinitum.jpg": [
+  2224,
+  1668
+ ],
+ "/bilder/05/skizzen-hauptmodell.jpg": [
+  2400,
+  3394
+ ],
+ "/bilder/05/sorge-2.jpg": [
+  2400,
+  1800
+ ],
+ "/bilder/05/sorge-4.jpg": [
+  2400,
+  1800
+ ],
+ "/bilder/05/sorge-begruenung.jpg": [
+  2400,
+  1800
+ ],
+ "/bilder/05/sorge-setzling.jpg": [
+  2400,
+  1800
+ ],
+ "/bilder/05/stecklenburg-mauerreste.jpg": [
+  2400,
+  1800
+ ],
+ "/bilder/05/stecklenburg.jpg": [
+  2400,
+  1800
+ ],
+ "/bilder/05/titel.jpg": [
+  1600,
+  2400
+ ],
+ "/bilder/vita/christian.png": [
+  1600,
+  1780
+ ],
+ "/bilder/vita/icons/affinity.png": [
+  160,
+  160
+ ],
+ "/bilder/vita/icons/archicad.png": [
+  160,
+  132
+ ],
+ "/bilder/vita/icons/claude-ai.png": [
+  160,
+  159
+ ],
+ "/bilder/vita/icons/indesign.png": [
+  160,
+  156
+ ],
+ "/bilder/vita/icons/keynote.png": [
+  160,
+  160
+ ],
+ "/bilder/vita/icons/pages.png": [
+  160,
+  160
+ ],
+ "/bilder/vita/icons/photoshop.png": [
+  160,
+  156
+ ],
+ "/bilder/vita/icons/premiere-pro.png": [
+  160,
+  156
+ ],
+ "/bilder/vita/icons/procreate.png": [
+  96,
+  96
+ ],
+ "/bilder/vita/icons/twinmotion.png": [
+  160,
+  159
+ ]
+}
