@@ -15,6 +15,7 @@
   --color-akzent: #2e5e4e;  /* Moos-Türkis aus dem Coverbild: Hover, aktive Zustände, Route */
   --color-akzent-hell: #dfe8e3; /* zarte Fläche im Akzentton */
   --color-akzent-dunkel: #1f3d34;
+  --color-route: #b8262b;   /* Expeditions-Rot – ausschließlich für die Route auf der Karte */
 }
 
 /* Schriften: werden in app/layout.tsx lokal geladen */

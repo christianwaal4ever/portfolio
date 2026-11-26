@@ -15,7 +15,7 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 /*
  * F2 Expeditionskarte (Konzept Abschnitt 6):
  * - Europa mit Nordafrika, Grundlage Natural Earth (gemeinfrei), erzeugt mit werkzeuge/karte.py
- * - Beim Scrollen bleibt die Karte stehen und eine gestrichelte Route zeichnet sich
+ * - Beim Scrollen bleibt die Karte stehen und eine rot gestrichelte Route (wie in alten Abenteuerfilmen) zeichnet sich
  *   von Station zu Station (01 → 05, chronologisch wie im PDF).
  * - Jede Station: Marker mit Nummer + kleines Vorschaubild. Hover hebt hervor,
  *   Klick öffnet die Projektseite.
@@ -209,8 +209,8 @@ export default function Karte() {
                 d={d}
                 mask={`url(#routen-maske-${i})`}
                 fill="none"
-                className="stroke-akzent"
-                strokeWidth="2.2"
+                className="stroke-route"
+                strokeWidth="2.6"
                 strokeDasharray="7 6"
                 strokeLinecap="round"
               />

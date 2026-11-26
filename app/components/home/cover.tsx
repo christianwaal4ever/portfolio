@@ -35,7 +35,9 @@ export default function Cover() {
           scrollTrigger: {
             trigger: bereich.current,
             start: "top 56px", // Unterkante der Navigation
-            end: "+=130%",
+            // inkl. Pause am Ende; 234 % hält das Tempo der Animation gleich
+            // (1,825 Einheiten × ca. 1,28 Bildschirmhöhen pro Einheit)
+            end: "+=234%",
             scrub: 0.8,
             pin: true,
             anticipatePin: 1,
@@ -74,25 +76,32 @@ export default function Cover() {
         });
 
         // Name leuchtet auf, sobald die Ruinen angekommen sind:
-        // 1. Lichtschein blendet auf, der Name erscheint überstrahlt
-        // 2. Licht klingt ab, der Name steht klar da
-        const leuchten = "0 0 30px rgba(255,255,255,1), 0 0 80px rgba(255,250,235,0.95), 0 0 160px rgba(255,250,235,0.8)";
-        const normal = "0 0 0px rgba(255,255,255,0), 0 0 0px rgba(255,250,235,0), 0 1px 18px rgba(0,0,0,0.25)";
-        tl.fromTo(".cover-licht", { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.07, ease: "power2.out" }, WEG);
-        tl.fromTo(
-          ".cover-name",
-          { autoAlpha: 0, scale: 1.05, filter: "blur(14px)", textShadow: leuchten },
-          { autoAlpha: 1, scale: 1.02, filter: "blur(3px)", textShadow: leuchten, duration: 0.07, ease: "power2.out" },
-          WEG,
-        );
-        tl.to(".cover-name", { scale: 1, filter: "blur(0px)", textShadow: normal, duration: 0.14, ease: "power2.inOut" }, WEG + 0.07);
-        tl.to(".cover-licht", { autoAlpha: 0, scale: 1.25, duration: 0.16, ease: "power1.in" }, WEG + 0.07);
+        // 1. Runder Lichtschein breitet sich von der Mitte aus, eine unscharfe
+        //    leuchtende Kopie des Namens blüht auf – der Name erscheint überstrahlt.
+        // 2. Licht und Glanz klingen ab, der Name steht klar da.
+        // (Bewusst ohne animierten Textschatten: der wurde an der Kante des
+        //  Namens rechteckig abgeschnitten.)
+        // a) Die Buchstaben selbst glühen zuerst auf (eng, hell)
+        tl.fromTo(".cover-glanz-nah", { autoAlpha: 0, scale: 0.98 }, { autoAlpha: 1, scale: 1.01, duration: 0.06, ease: "power2.out" }, WEG);
+        // b) Aus den Buchstaben strahlt ein weicher Schein nach außen (gleiche Form, breiter)
+        tl.fromTo(".cover-glanz-fern", { autoAlpha: 0, scale: 1 }, { autoAlpha: 1, scale: 1.08, duration: 0.09, ease: "power2.out" }, WEG + 0.02);
+        // c) Zarter, liegender ovaler Hof dahinter
+        tl.fromTo(".cover-licht", { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.1, ease: "power2.out" }, WEG + 0.03);
+        // Der Name selbst erscheint im Licht
+        tl.fromTo(".cover-name", { autoAlpha: 0, scale: 1.03 }, { autoAlpha: 1, scale: 1.01, duration: 0.07, ease: "power2.out" }, WEG + 0.03);
+        // Alles klingt ab, der Name steht klar da
+        tl.to(".cover-name", { scale: 1, duration: 0.14, ease: "power2.inOut" }, WEG + 0.1);
+        tl.to(".cover-glanz-nah", { autoAlpha: 0, duration: 0.12, ease: "power1.in" }, WEG + 0.09);
+        tl.to(".cover-glanz-fern", { autoAlpha: 0, scale: 1.16, duration: 0.16, ease: "power1.in" }, WEG + 0.1);
+        tl.to(".cover-licht", { autoAlpha: 0, scale: 1.2, duration: 0.17, ease: "power1.in" }, WEG + 0.1);
 
         // Weiterscrollen: „Portfolio 2026“ gleitet herein
         tl.fromTo(".cover-unterzeile", { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.1 }, WEG + 0.3);
 
-        // kurze Pause am Ende, bevor die Seite weiterscrollt
-        tl.to({}, { duration: 0.12 });
+        // Pause am Ende: das fertige Cover bleibt noch ein, zwei Scrollbewegungen
+        // stehen, bevor es zur Expeditionskarte weitergeht
+        // (ab Erscheinen von „Portfolio 2026“ bis zum Ende: 0,1 + 0,9 = 1,0 Einheiten)
+        tl.to({}, { duration: 0.9 });
       });
     },
     { scope: bereich },
@@ -134,18 +143,37 @@ export default function Cover() {
         className="cover-ruine-unten absolute -bottom-[3vw] -left-[16vw] w-[80vw] max-w-none md:-left-[14%] md:bottom-auto md:top-[50%] md:w-[52%]"
       />
 
-      {/* Lichtschein hinter dem Namen (nur während des Aufleuchtens sichtbar) */}
+      {/* Zarter Hof hinter dem Namen: liegendes Oval, etwa so breit wie der Name,
+          weich auslaufend (nur während des Aufleuchtens sichtbar) */}
       <div
         aria-hidden="true"
-        className="cover-licht pointer-events-none invisible absolute inset-0 m-auto h-[60vh] w-[70vw] opacity-0 [background:radial-gradient(closest-side,rgba(255,252,240,0.85),rgba(255,252,240,0.35)_45%,transparent)]"
+        className="cover-licht pointer-events-none invisible absolute inset-0 m-auto h-[calc(var(--name)*3.4)] w-[calc(var(--name)*6.8)] rounded-[50%] opacity-0 mix-blend-screen [background:radial-gradient(ellipse_closest-side,rgba(255,252,238,0.55),rgba(255,250,232,0.25)_40%,rgba(255,248,228,0)_100%)]"
       />
 
       {/* Schriftzug */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white [text-shadow:0_1px_18px_rgba(0,0,0,0.25)]">
-        <h1 className="cover-name font-display text-[length:var(--name)] leading-[0.93]">
-          <span className="block">{person.vorname}</span>
-          <span className="block">{person.nachname}</span>
-        </h1>
+        <div className="relative">
+          {/* Glanz in Buchstabenform: unscharfe, leuchtende Kopien des Namens.
+              „fern“ = breiter Schein nach außen, „nah“ = helles Glühen der Buchstaben */}
+          <p
+            aria-hidden="true"
+            className="cover-glanz-fern pointer-events-none invisible absolute inset-0 font-display text-[length:var(--name)] leading-[0.93] text-[#fff8e6] opacity-0 blur-2xl [text-shadow:none]"
+          >
+            <span className="block">{person.vorname}</span>
+            <span className="block">{person.nachname}</span>
+          </p>
+          <p
+            aria-hidden="true"
+            className="cover-glanz-nah pointer-events-none invisible absolute inset-0 font-display text-[length:var(--name)] leading-[0.93] text-white opacity-0 blur-[6px] [text-shadow:none]"
+          >
+            <span className="block">{person.vorname}</span>
+            <span className="block">{person.nachname}</span>
+          </p>
+          <h1 className="cover-name relative font-display text-[length:var(--name)] leading-[0.93]">
+            <span className="block">{person.vorname}</span>
+            <span className="block">{person.nachname}</span>
+          </h1>
+        </div>
         <p className="cover-unterzeile mt-[calc(var(--name)*0.3)] text-[length:max(1rem,calc(var(--name)*0.273))] leading-none">
           {person.untertitel}
         </p>
