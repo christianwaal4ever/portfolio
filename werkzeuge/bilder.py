@@ -95,6 +95,12 @@ LISTE = [
     ("5_Lebende_Ruinen/AeQ_Skizze Kopie.png", "05/aesthetische-qualitaeten.png", "frei", {"breite": 1400}),
     ("5_Lebende_Ruinen/Exp_Skizzen2 Kopie.pdf", "05/skizzen-hauptmodell.jpg", "plan", {}),
     ("5_Lebende_Ruinen/Exp_Modell.png", "05/lapis-infinitum.jpg", "foto", {}),
+    # ---------- Vorschaubilder für die Expeditionskarte (16:10) ----------
+    ("1_Kunstschule_NIFEO/Renderings/R_Nifeo_ganz Kopie.png", "karte/01.jpg", "foto", {"format": (16, 10), "breite": 480}),
+    ("2_Berber_hut/Berber_hut_visualisierung.jpg", "karte/02.jpg", "foto", {"format": (16, 10), "breite": 480}),
+    ("3_Nature_Enjoyer_Village/Hauptbild Kopie.png", "karte/03.jpg", "foto", {"format": (16, 10), "breite": 480}),
+    ("4_Shapeshifter_X3/X3_Visualisierung.jpg", "karte/04.jpg", "foto", {"format": (16, 10), "breite": 480}),
+    ("5_Lebende_Ruinen/buddah_cover.jpg", "karte/05.jpg", "foto", {"format": (16, 10), "breite": 480, "crop": (0.3, 0.42, 0.95, 0.72)}),
     # ---------- Vita ----------
     ("6_Vita/christian_indo_cutout.png", "vita/christian.png", "frei", {"breite": 1600}),
     ("6_Vita/Programm_icons/Archicad.png", "vita/icons/archicad.png", "frei", {"breite": 160}),
@@ -186,6 +192,14 @@ def main():
                 im = im.crop(box)
         else:
             im = im.convert("RGB")
+        if "format" in opt:  # mittig auf ein Seitenverhältnis zuschneiden
+            fw, fh = opt["format"]
+            if im.width / im.height > fw / fh:
+                neu = int(im.height * fw / fh)
+                im = im.crop(((im.width - neu) // 2, 0, (im.width - neu) // 2 + neu, im.height))
+            else:
+                neu = int(im.width * fh / fw)
+                im = im.crop((0, (im.height - neu) // 2, im.width, (im.height - neu) // 2 + neu))
         im = verkleinern(im, breite)
         pfad = os.path.join(OUT, ziel)
         os.makedirs(os.path.dirname(pfad), exist_ok=True)

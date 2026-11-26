@@ -38,7 +38,7 @@ export const projekte: Projekt[] = [
     was: "Bachelorarbeit",
     wann: "2025 (8. Semester)",
     mitWem: "Einzelarbeit",
-    pruefer: ["Prof. Andre Nakonz"],
+    pruefer: ["Prof. André Nakonz"],
     text: [
       "Zwischen jahrhundertealten Mauern und wucherndem Grün der italienischen Kleinstadt Genazzano erwacht das vergessene Nymphaeum des Bramante zu neuem Leben. Für die Recherchephase dieses Projekts bin ich persönlich zum Objekt gereist, um den Bestand vor Ort zu erforschen, zu dokumentieren und zu vermessen.",
       "Die Kunstschule Nifeo versteht sich als sommerlich geöffnete Freilichtschule für kreative Entfaltung – offen für die Bewohner Genazzanos und der umliegenden Gemeinden. Der Entwurf revitalisiert die Ruinen mit Respekt und Zurückhaltung und schafft einen Ort der Gemeinschaft, der das kulturelle Selbstverständnis der Stadt stärkt. Aus den Ruinen wird ein neuer Möglichkeitsraum: Der Kreativort macht Genazzano zur Kreativstadt.",
@@ -81,7 +81,7 @@ export const projekte: Projekt[] = [
     was: "Entwurfsprojekt",
     wann: "2024 (6. Semester)",
     mitWem: "Simonne Joffroy (Kommilitonin)",
-    pruefer: ["Prof. Andre Nakonz"],
+    pruefer: ["Prof. André Nakonz"],
     text: [
       "Das Möbelstück ist so konzipiert, dass es zu 100 % aus lösbaren Verbindungen besteht. Kern dieses Konzepts ist ein einzigartiges Verbindungselement, das vielfältig einsetzbar ist und somit Variationen des Möbels ermöglicht, die über einen Entwurf hinausgehen.",
       "Ein weiterer Teil dieses Entwurfs bestand darin, einen Prototypen unseres Möbels im Maßstab 1:1 nachzubauen.",

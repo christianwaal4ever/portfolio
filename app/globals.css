@@ -67,13 +67,18 @@ section[id] {
  */
 @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
   .js .cover-ruine-unten {
-    transform: translate(-48%, 38%) rotate(-4deg);
+    transform: translate(-80%, 90%) rotate(-5deg);
+    opacity: 0;
+    visibility: hidden;
   }
   .js .cover-ruine-oben {
-    transform: translate(50%, -48%) rotate(4deg);
+    transform: translate(80%, -90%) rotate(5deg);
+    opacity: 0;
+    visibility: hidden;
   }
-  .js .cover-zeile {
-    clip-path: inset(-40% -10% 100% -10%);
+  .js .cover-name {
+    opacity: 0;
+    visibility: hidden;
   }
   .js .cover-unterzeile {
     opacity: 0;
