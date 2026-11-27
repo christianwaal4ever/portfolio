@@ -1,6 +1,7 @@
 import Header from "../components/header";
 import Footer from "../components/footer";
 import Animationen from "../components/animationen";
+import ScrollStart from "../components/scroll-start";
 
 // Rahmen für alle öffentlichen Seiten (nicht für die Login-Seite)
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -16,6 +17,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <main id="inhalt">{children}</main>
       <Footer />
       <Animationen />
+      <ScrollStart />
     </>
   );
 }

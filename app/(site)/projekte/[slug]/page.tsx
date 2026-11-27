@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { projektPerSlug, projekte, strecken, titelbilder } from "../../../daten";
 import Masskette from "../../../components/masskette";
 import Strecke from "../../../components/strecke";
+import ProjektTitel from "../../../components/projekt-titel";
 
 /*
  * Vorlage für alle 5 Projektseiten (Konzept Abschnitt 7):
@@ -53,46 +54,13 @@ export default async function Projektseite({
   return (
     <article>
       {/* 1. Titelbild */}
-      <header
-        className={`relative flex min-h-[calc(100svh-3.5rem)] items-end overflow-hidden ${
-          titel.hell ? "bg-white text-tinte" : "bg-tinte text-white"
-        }`}
-      >
-        <Image
-          src={titel.src}
-          alt={titel.alt}
-          fill
-          priority
-          sizes="100vw"
-          className={titel.hell ? "object-contain object-right" : "object-cover"}
-        />
-        {/* Verlauf, damit die Schrift lesbar bleibt */}
-        <div
-          aria-hidden="true"
-          className={`absolute inset-0 ${
-            titel.hell
-              ? "bg-gradient-to-r from-white via-white/80 to-transparent"
-              : "bg-gradient-to-t from-black/75 via-black/15 to-transparent"
-          }`}
-        />
-        <div className="relative mx-auto grid w-full max-w-7xl items-end gap-6 px-4 pb-14 pt-32 md:grid-cols-12 md:px-8">
-          <p
-            aria-hidden="true"
-            className={`text-[7rem] font-medium leading-[0.8] tracking-tighter md:col-span-3 md:text-[11rem] ${
-              titel.hell ? "text-tinte/15" : "text-white/35"
-            }`}
-          >
-            {p.nummer}
-          </p>
-          <div className="md:col-span-9">
-            <p className={`font-mono text-xs uppercase tracking-[0.2em] ${titel.hell ? "text-akzent" : "text-white/80"}`}>
-              {p.was} · {p.ort}
-            </p>
-            <h1 className="mt-3 text-5xl font-medium leading-[0.95] tracking-tight md:text-7xl lg:text-8xl">{p.titel}</h1>
-            <p className={`mt-4 text-xl md:text-2xl ${titel.hell ? "text-grau" : "text-white/85"}`}>{p.untertitel}</p>
-          </div>
-        </div>
-      </header>
+      <ProjektTitel
+        nummer={p.nummer}
+        titel={p.titel}
+        untertitel={p.untertitel}
+        zeile={`${p.was} · ${p.ort}`}
+        bild={titel}
+      />
 
       {/* 2. Steckbrief und Text als Doppelseite */}
       <div className="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">

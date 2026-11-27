@@ -86,7 +86,12 @@ export default function Karte() {
         // Maskenpfade vorbereiten: komplett „ungezeichnet“
         const masken = gsap.utils.toArray<SVGPathElement>(".routen-maske");
         const laengen = masken.map((p) => p.getTotalLength());
-        masken.forEach((p, i) => gsap.set(p, { strokeDasharray: laengen[i], strokeDashoffset: laengen[i] }));
+        // Puffer: die runden Linienenden ragen 5 Einheiten über den Strich hinaus –
+        // ohne Puffer blitzt am Anfang jedes Abschnitts ein roter Punkt auf.
+        const PUFFER = 20;
+        masken.forEach((p, i) =>
+          gsap.set(p, { strokeDasharray: `${laengen[i]} ${laengen[i] + PUFFER * 2}`, strokeDashoffset: laengen[i] + PUFFER }),
+        );
 
         const tl = gsap.timeline({
           defaults: { ease: "none" },
@@ -267,12 +272,12 @@ export default function Karte() {
                   {/* Marker mit Nummer */}
                   <g className={`marker-${i}`}>
                     <circle cx={s.x} cy={s.y} r="18" fill="transparent" />
-                    <circle cx={s.x} cy={s.y} r="9" className="fill-papier stroke-akzent" strokeWidth="1.2" />
+                    <circle cx={s.x} cy={s.y} r="9" className="fill-papier stroke-route" strokeWidth="1.2" />
                     <circle
                       cx={s.x}
                       cy={s.y}
                       r="4.5"
-                      className="fill-akzent transition-[r] group-hover:[r:6.5] group-focus-visible:[r:6.5]"
+                      className="fill-route transition-[r] group-hover:[r:6.5] group-focus-visible:[r:6.5]"
                     />
                     <text
                       x={s.x + MOBIL_NUMMER[s.nummer][0]}

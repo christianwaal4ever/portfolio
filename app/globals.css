@@ -85,6 +85,22 @@ section[id] {
     opacity: 0;
     visibility: hidden;
   }
+  /* Projektseiten: zuerst nur das Titelbild, der Titel kommt beim Scrollen */
+  .js .titel-verlauf,
+  .js .titel-zeile,
+  .js .titel-unter {
+    opacity: 0;
+    visibility: hidden;
+  }
+  .js .titel-nummer,
+  .js .titel-name {
+    transform: translateY(105%);
+  }
+  /* Expeditionskarte: Route noch ungezeichnet, bis die Animation übernimmt */
+  .js .routen-maske {
+    stroke-dasharray: 1 100000;
+    stroke-dashoffset: 50;
+  }
 }
 
 /* Pläne: weißes Blatt mit kleinen Passermarken an den Ecken (Vermessungs-Ästhetik) */
