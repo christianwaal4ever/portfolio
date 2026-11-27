@@ -6,6 +6,7 @@ import { projektPerSlug, projekte, strecken, titelbilder } from "../../../daten"
 import Masskette from "../../../components/masskette";
 import Strecke from "../../../components/strecke";
 import ProjektTitel from "../../../components/projekt-titel";
+import NifeoExpedition from "../../../components/nifeo/laden";
 
 /*
  * Vorlage für alle 5 Projektseiten (Konzept Abschnitt 7):
@@ -61,6 +62,9 @@ export default async function Projektseite({
         zeile={`${p.was} · ${p.ort}`}
         bild={titel}
       />
+
+      {/* F4: Scroll-Expedition von Italien bis zum 3D-Modell (nur NIFEO) */}
+      {p.slug === "01-kunstschule-nifeo" && <NifeoExpedition />}
 
       {/* 2. Steckbrief und Text als Doppelseite */}
       <div className="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
