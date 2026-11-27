@@ -170,18 +170,12 @@ export const strecken: Record<string, Block[]> = {
       unten: { src: "/bilder/01/vor-ort-3.jpg", alt: "Christian misst mit einem Laser-Entfernungsmesser an der bemoosten Mauer", art: "foto" },
       text: "Den Bestand vor Ort erforschen, dokumentieren und vermessen.",
     },
+    // Italienkarte, Lageplan und Bestands-Isometrie zeigt bereits die Scroll-Expedition (F4)
     {
-      typ: "paar",
-      a: { src: "/bilder/01/lageplan.jpg", alt: "Lageplan von Genazzano mit dem Nymphäum am Fluss", text: "Lage & Ort", art: "plan" },
-      b: { src: "/bilder/01/italien.jpg", alt: "Karte von Italien mit Rom und Genazzano", art: "plan" },
-      aufteilung: "7-5",
-      versatz: true,
-    },
-    {
-      typ: "paar",
-      a: { src: "/bilder/01/iso-bestand.jpg", alt: "Isometrie des Bestands, des Nymphäums von Bramante", text: "Bestand – das Nymphäum des Bramante, Anfang 16. Jahrhundert", art: "plan" },
-      b: { src: "/bilder/01/besonderheiten.png", alt: "Skizzen von Serliana, Okuli und Säule", text: "Serliana · Okuli · Toskanisch-Dorische Säulen", art: "frei" },
-      aufteilung: "8-4",
+      typ: "bild",
+      bild: { src: "/bilder/01/besonderheiten.png", alt: "Skizzen von Serliana, Okuli und Säule", text: "Besonderheiten des Bestands: Serliana · Okuli · Toskanisch-Dorische Säulen", art: "frei" },
+      lage: "rechts",
+      groesse: "mittel",
     },
     { typ: "vollbild", bild: { src: "/bilder/01/titel.jpg", alt: "Moosbewachsener Durchgang in der Ruine", art: "foto" } },
     { typ: "kapitel", titel: "Entwurf", zeile: "Ruine im grünen Tal" },

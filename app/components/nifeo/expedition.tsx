@@ -50,10 +50,12 @@ const MODELL = "/modelle/nifeo-bestand.glb";
 // Abschnitte der Zeitachse (0–1)
 // Ohne Haltepunkte: die Abschnitte gehen fließend ineinander über, jede
 // Scrollbewegung bewegt das Bild.
+const ENDE = 0.76; // Anteil der Scrollstrecke für die Fahrt, der Rest = Pause am fertigen Modell
+
 const P = {
   zoom: [0, 0.46], // durchgehender Zoom: Italien → Latium → genau auf Genazzano
   plan: [0.4, 0.55], // Lageplan taucht weich aus dem Punkt Genazzano auf
-  planZoom: [0.47, 0.64], // Lageplan zoomt auf den Maßstab der 3D-Szene
+  planZoom: [0.4, 0.64], // … und zoomt schon währenddessen weiter (ein Fluss bis zum Modell)
   wechsel: [0.645, 0.66], // Übergang Bild → 3D (erst nach dem Zoom: deckungsgleich, unsichtbar)
   wachsen: [0.66, 0.84], // Modell wächst aus dem Grundriss
   neigen: [0.7, 0.97], // Kamera kippt von oben in die Schrägansicht (Vorderseite)
@@ -63,8 +65,8 @@ const P = {
 const TEXTE = [
   { von: -1, bis: 0.08, kicker: "Expedition 01", titel: "Italien", text: "" },
   {
-    von: 0.14,
-    bis: 0.36,
+    von: 0.1,
+    bis: 0.28,
     kicker: GENAZZANO.koordinaten,
     titel: "Genazzano, Latium",
     text: "Rund 58 km östlich von Rom. Für die Recherche bin ich persönlich zum Objekt gereist, um den Bestand vor Ort zu erforschen, zu dokumentieren und zu vermessen.",
@@ -93,10 +95,10 @@ function zwischen(v0: ViewBox, v1: ViewBox, t: number): ViewBox {
 }
 
 // Ein durchgehender Zoom von ganz Italien bis genau auf den Punkt Genazzano
-// (Bildmitte = Genazzano). Gleichmäßig, nur zum Ende hin sanft auslaufend.
+// (Bildmitte = Genazzano), gleichmäßig – der Lageplan übernimmt das Tempo.
 function kameraBei(p: number): ViewBox {
   const t = Math.min(Math.max((p - P.zoom[0]) / (P.zoom[1] - P.zoom[0]), 0), 1);
-  const e = 1 - Math.pow(1 - t, 1.6);
+  const e = 1 - Math.pow(1 - t, 1.15);
   return zwischen(FAHRT.italien as ViewBox, FAHRT.genazzano as ViewBox, e);
 }
 
@@ -199,9 +201,11 @@ function ScrollFahrt() {
   const [draufsicht, setDraufsicht] = useState(false);
   const [frei, setFrei] = useState(false);
 
-  // Alles aus einem Wert p (0–1) ableiten
-  const zeigen = (p: number) => {
-    stand.current = p;
+  // Alles aus einem Wert p (0–1) ableiten. Die Fahrt endet bei ENDE der
+  // Scrollstrecke; danach steht das fertige Modell noch eine Weile zum Drehen.
+  const zeigen = (roh: number) => {
+    stand.current = roh;
+    const p = Math.min(roh / ENDE, 1);
     const s = svg.current;
     if (!s) return;
     const [x, y, w, h] = kameraBei(p);
@@ -252,7 +256,8 @@ function ScrollFahrt() {
     // … und zoomt dann genau auf den Maßstab der 3D-Draufsicht. Dort liegt der
     // Plan in der 3D-Szene deckungsgleich – der Wechsel ist unsichtbar.
     const zielSkala = pxProEinheit(H) / PLAN_PX_PRO_EINHEIT / ((PLAN_HOEHE * H) / LAGEPLAN.h);
-    const zoom = Math.pow(zielSkala, anteil(p, P.planZoom));
+    const tz = Math.min(Math.max((p - P.planZoom[0]) / (P.planZoom[1] - P.planZoom[0]), 0), 1);
+    const zoom = Math.pow(zielSkala, 1 - Math.pow(1 - tz, 1.6));
     if (planBild.current)
       planBild.current.style.transform = `translate(-${LAGEPLAN.nx * 100}%, -${LAGEPLAN.ny * 100}%) scale(${zoom.toFixed(4)})`;
     if (massstab.current) massstab.current.style.opacity = (1 - auf).toFixed(3);
@@ -295,7 +300,7 @@ function ScrollFahrt() {
         scrollTrigger: {
           trigger: bereich.current,
           start: "top 56px",
-          end: "+=420%",
+          end: "+=560%",
           scrub: 0.8,
           pin: true,
           anticipatePin: 1,

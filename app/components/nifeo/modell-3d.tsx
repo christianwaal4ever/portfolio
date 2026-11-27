@@ -49,10 +49,11 @@ const FARBE_KANTE = "#6f685b";
 const FARBE_PAPIER = "#f6f4ef";
 
 const DRAUF = { polar: 0.0001, azimut: 0 };
-// Schrägansicht von der Vorderseite der Ruine
-const SCHRAEG = { polar: THREE.MathUtils.degToRad(56), azimut: THREE.MathUtils.degToRad(148) };
-// Licht kommt von vorne (leicht seitlich), der Schatten fällt nach hinten
-const SONNE = new THREE.Vector3().setFromSphericalCoords(16, THREE.MathUtils.degToRad(42), THREE.MathUtils.degToRad(175));
+// Schrägansicht nach Christians Vorgabe (angelehnt an seine Bestands-Isometrie):
+// Bogenreihe vorne, langer Kastenraum links
+const SCHRAEG = { polar: THREE.MathUtils.degToRad(56), azimut: THREE.MathUtils.degToRad(55) };
+// Licht kommt von vorne (leicht seitlich zur Kamera), der Schatten fällt nach hinten
+const SONNE = new THREE.Vector3().setFromSphericalCoords(16, THREE.MathUtils.degToRad(46), THREE.MathUtils.degToRad(118));
 
 const Modell3D = forwardRef<Modell3DSteuerung, Props>(function Modell3D(
   { src, planSrc, className, onBereit, onAnsicht },
@@ -67,6 +68,8 @@ const Modell3D = forwardRef<Modell3DSteuerung, Props>(function Modell3D(
     ebene: new THREE.Plane(new THREE.Vector3(0, -1, 0), 0),
     modell: null as THREE.Group | null,
     blatt: null as { value: number } | null, // wie stark der Plan zum Papier hin verblasst
+    neigungE: 0,
+    kanten: null as THREE.LineBasicMaterial | null,
     kamera: null as THREE.PerspectiveCamera | null,
     steuerung: null as OrbitControls | null,
     fahrt: null as gsap.core.Tween | null,
@@ -89,11 +92,28 @@ const Modell3D = forwardRef<Modell3DSteuerung, Props>(function Modell3D(
     s.steuerung.update();
     // In der Schrägansicht tritt der Plan etwas zurück (sonst wirken die schwarzen
     // Wände unter dem Modell wie harte Schatten)
-    if (s.blatt) s.blatt.value = 0.5 * e;
+    s.neigungE = e;
+    planBlass();
+  }
+
+  // Der Plan tritt zurück, sobald das Modell wächst (sonst schimmern seine
+  // schwarzen Wände durch offene Stellen der Schnittfläche) und in der Schrägansicht.
+  function planBlass() {
+    const s = z.current;
+    if (!s.blatt) return;
+    const w = Math.min(s.wachstum / 0.12, 1);
+    s.blatt.value = Math.max(0.5 * s.neigungE, 0.62 * w * w * (3 - 2 * w));
   }
 
   function wachstumAnwenden() {
     const s = z.current;
+    planBlass();
+    // Konturen erst, wenn das Modell fertig steht – angeschnitten wirken sie wie Gekritzel
+    if (s.kanten) {
+      const k = Math.min(Math.max((s.wachstum - 0.85) / 0.15, 0), 1);
+      s.kanten.opacity = 0.2 * k;
+      s.kanten.visible = k > 0.001;
+    }
     const e = 1 - Math.pow(1 - s.wachstum, 2);
     s.ebene.constant = -0.01 + e * (s.hoehe + 0.05);
     if (s.modell) {
@@ -396,6 +416,7 @@ const Modell3D = forwardRef<Modell3DSteuerung, Props>(function Modell3D(
         const kantenGeo = new THREE.BufferGeometry();
         kantenGeo.setAttribute("position", new THREE.BufferAttribute(kanten, 3));
         modell.add(rueck, flaeche, new THREE.LineSegments(kantenGeo, kantenMaterial));
+        s.kanten = kantenMaterial;
       });
 
       const box = new THREE.Box3().setFromObject(modell);
