@@ -1,0 +1,19 @@
+{
+  "drehungY": 1.8771,
+  "pxProEinheit": 26.06,
+  "ursprungPx": [
+    1697.5,
+    2264.76
+  ],
+  "planPx": [
+    2400,
+    3394
+  ],
+  "abweichungPx": 0.5,
+  "gespiegelt": false,
+  "detail": {
+    "x0": 1072,
+    "y0": 1640,
+    "groesse": 1250
+  }
+}

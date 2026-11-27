@@ -6,6 +6,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import type { Modell3DSteuerung } from "./modell-3d";
+import { DETAIL, PLAN_PX, PLAN_PX_PRO_EINHEIT, PLAN_URSPRUNG, pxProEinheit } from "./kamera";
 import {
   ITALIEN,
   FAHRT,
@@ -30,7 +31,9 @@ const Modell3D = dynamic(() => import("./modell-3d"), { ssr: false });
  * F4 · NIFEO-Scroll-Expedition (Etappe 6)
  * Der Abschnitt bleibt stehen (Pinning), Scrollen steuert die Kamerafahrt:
  *   1. Italien  →  2. Zoom auf Genazzano (Latium)  →  3. Lageplan mit dem Nymphäum
- *   →  4. Das 3D-Modell des Bestands wächst aus der Mitte heraus und ist frei drehbar.
+ *   →  4. Der Lageplan zoomt auf den Maßstab der 3D-Szene und geht nahtlos in sie über:
+ *      Das Modell wächst exakt aus seinem Grundriss, die Kamera kippt in die
+ *      Schrägansicht, danach ist es frei drehbar („Draufsicht“ führt zurück).
  * Hochscrollen spielt alles rückwärts.
  * (Schritte 5/6 – die neuen Elemente setzen sich ein – folgen, sobald Christian
  *  die Einzeldateien liefert; Platz dafür ist in der Zeitachse vorgesehen.)
@@ -39,28 +42,35 @@ const Modell3D = dynamic(() => import("./modell-3d"), { ssr: false });
 
 type ViewBox = [number, number, number, number];
 
-const LAGEPLAN = { src: "/bilder/01/lageplan.jpg", b: 2400, h: 3394, nx: 0.715, ny: 0.667 }; // nx/ny = Lage des Nymphäums im Plan
+// nx/ny = Lage des Modell-Ursprungs (Mitte des Nymphäums) im Plan, aus werkzeuge/ausrichtung.py
+const LAGEPLAN = { src: "/bilder/01/lageplan.jpg", b: PLAN_PX[0], h: PLAN_PX[1], nx: PLAN_URSPRUNG.x, ny: PLAN_URSPRUNG.y };
+const PLAN_HOEHE = 2.3; // Lageplan im Kreis: 230 % der Bühnenhöhe
 const MODELL = "/modelle/nifeo-bestand.glb";
 
 // Abschnitte der Zeitachse (0–1)
+// Ohne Haltepunkte: die Abschnitte gehen fließend ineinander über, jede
+// Scrollbewegung bewegt das Bild.
 const P = {
-  zoom1: [0.05, 0.3],
-  zoom2: [0.38, 0.6],
-  plan: [0.5, 0.64],
-  modell: [0.7, 0.86],
+  zoom: [0, 0.46], // durchgehender Zoom: Italien → Latium → genau auf Genazzano
+  plan: [0.4, 0.55], // Lageplan taucht weich aus dem Punkt Genazzano auf
+  planZoom: [0.47, 0.64], // Lageplan zoomt auf den Maßstab der 3D-Szene
+  wechsel: [0.645, 0.66], // Übergang Bild → 3D (erst nach dem Zoom: deckungsgleich, unsichtbar)
+  wachsen: [0.66, 0.84], // Modell wächst aus dem Grundriss
+  neigen: [0.7, 0.97], // Kamera kippt von oben in die Schrägansicht (Vorderseite)
+  frei: 0.97, // ab hier mit der Maus drehbar
 } as const;
 
 const TEXTE = [
-  { von: -1, bis: 0.12, kicker: "Expedition 01", titel: "Italien", text: "" },
+  { von: -1, bis: 0.08, kicker: "Expedition 01", titel: "Italien", text: "" },
   {
-    von: 0.22,
-    bis: 0.5,
+    von: 0.14,
+    bis: 0.36,
     kicker: GENAZZANO.koordinaten,
     titel: "Genazzano, Latium",
     text: "Rund 58 km östlich von Rom. Für die Recherche bin ich persönlich zum Objekt gereist, um den Bestand vor Ort zu erforschen, zu dokumentieren und zu vermessen.",
   },
-  { von: 0.56, bis: 0.74, kicker: "Lageplan", titel: "Das Nymphäum des Bramante", text: "Anfang 16. Jahrhundert – heute eine Ruine." },
-  { von: 0.8, bis: 2, kicker: "Bestand · 3D-Modell", titel: "Die Ruine heute", text: "" },
+  { von: 0.44, bis: 0.66, kicker: "Lageplan", titel: "Das Nymphäum des Bramante", text: "Anfang 16. Jahrhundert – heute eine Ruine." },
+  { von: 0.88, bis: 2, kicker: "Bestand · 3D-Modell", titel: "Die Ruine heute", text: "" },
 ];
 
 const glatt = (t: number) => {
@@ -82,12 +92,12 @@ function zwischen(v0: ViewBox, v1: ViewBox, t: number): ViewBox {
   return [cx - w / 2, cy - h / 2, w, h];
 }
 
+// Ein durchgehender Zoom von ganz Italien bis genau auf den Punkt Genazzano
+// (Bildmitte = Genazzano). Gleichmäßig, nur zum Ende hin sanft auslaufend.
 function kameraBei(p: number): ViewBox {
-  const a = FAHRT.italien as ViewBox;
-  const b = FAHRT.latium as ViewBox;
-  const c = FAHRT.genazzano as ViewBox;
-  if (p < P.zoom2[0]) return zwischen(a, b, anteil(p, P.zoom1));
-  return zwischen(b, c, anteil(p, P.zoom2));
+  const t = Math.min(Math.max((p - P.zoom[0]) / (P.zoom[1] - P.zoom[0]), 0), 1);
+  const e = 1 - Math.pow(1 - t, 1.6);
+  return zwischen(FAHRT.italien as ViewBox, FAHRT.genazzano as ViewBox, e);
 }
 
 function schoeneZahl(km: number) {
@@ -178,7 +188,7 @@ function ScrollFahrt() {
   const svg = useRef<SVGSVGElement>(null);
   const modell = useRef<Modell3DSteuerung>(null);
   const plan = useRef<HTMLDivElement>(null);
-  const planBild = useRef<HTMLImageElement>(null);
+  const planBild = useRef<HTMLDivElement>(null);
   const leinwand = useRef<HTMLDivElement>(null);
   const massstab = useRef<HTMLDivElement>(null);
   const massBalken = useRef<HTMLSpanElement>(null);
@@ -186,6 +196,8 @@ function ScrollFahrt() {
   const texte = useRef<(HTMLDivElement | null)[]>([]);
   const hinweis = useRef<HTMLDivElement>(null);
   const stand = useRef(0);
+  const [draufsicht, setDraufsicht] = useState(false);
+  const [frei, setFrei] = useState(false);
 
   // Alles aus einem Wert p (0–1) ableiten
   const zeigen = (p: number) => {
@@ -225,25 +237,41 @@ function ScrollFahrt() {
     if (massBalken.current) massBalken.current.style.width = `${(strecke / kmPro100) * 100}px`;
     if (massText.current) massText.current.textContent = strecke >= 1 ? `${strecke} km` : `${Math.round(strecke * 1000)} m`;
 
-    // Lageplan: öffnet sich kreisförmig aus dem Punkt Genazzano
-    const m = anteil(p, P.modell);
+    // Lageplan: öffnet sich kreisförmig aus dem Punkt Genazzano …
     if (plan.current) {
-      plan.current.style.clipPath = `circle(${(auf * 85).toFixed(2)}% at 50% 50%)`;
-      plan.current.style.visibility = auf > 0.001 ? "visible" : "hidden";
-      plan.current.style.opacity = (1 - 0.82 * m).toFixed(3);
+      // weicher, runder Übergang statt harter Kreiskante – wie Eintauchen durch Dunst
+      const r1 = auf * 135;
+      const r0 = Math.max(0, r1 - 38);
+      const maske = `radial-gradient(circle at 50% 50%, #000 ${r0.toFixed(2)}%, transparent ${r1.toFixed(2)}%)`;
+      plan.current.style.maskImage = maske;
+      plan.current.style.webkitMaskImage = maske;
+      plan.current.style.filter = auf < 1 ? `blur(${((1 - auf) * 9).toFixed(2)}px)` : "none";
+      plan.current.style.transform = `scale(${(1.07 - 0.07 * auf).toFixed(4)})`;
+      plan.current.style.visibility = auf > 0.001 && p < P.wechsel[1] ? "visible" : "hidden";
     }
-    if (planBild.current) planBild.current.style.transform = `translate(-${LAGEPLAN.nx * 100}%, -${LAGEPLAN.ny * 100}%) scale(${1 + 1.6 * m})`;
+    // … und zoomt dann genau auf den Maßstab der 3D-Draufsicht. Dort liegt der
+    // Plan in der 3D-Szene deckungsgleich – der Wechsel ist unsichtbar.
+    const zielSkala = pxProEinheit(H) / PLAN_PX_PRO_EINHEIT / ((PLAN_HOEHE * H) / LAGEPLAN.h);
+    const zoom = Math.pow(zielSkala, anteil(p, P.planZoom));
+    if (planBild.current)
+      planBild.current.style.transform = `translate(-${LAGEPLAN.nx * 100}%, -${LAGEPLAN.ny * 100}%) scale(${zoom.toFixed(4)})`;
     if (massstab.current) massstab.current.style.opacity = (1 - auf).toFixed(3);
-    // Hinter dem Modell wird es ruhig: Karte tritt ganz zurück, Plan bleibt als Hauch
-    s.style.opacity = (1 - m).toFixed(3);
+    s.style.visibility = p < P.wechsel[1] ? "visible" : "hidden";
 
-    // 3D-Modell wächst heraus
-    modell.current?.setWachstum(m);
+    // 3D: erscheint deckungsgleich, Modell wächst aus dem Grundriss, Kamera kippt
+    const wechsel = anteil(p, P.wechsel);
+    const m3 = modell.current;
+    m3?.setWachstum(anteil(p, P.wachsen));
+    m3?.setNeigung(anteil(p, P.neigen));
+    const istFrei = p >= P.frei;
+    m3?.setFrei(istFrei);
+    setFrei(istFrei);
     if (leinwand.current) {
-      leinwand.current.style.visibility = m > 0.001 ? "visible" : "hidden";
-      leinwand.current.style.pointerEvents = m > 0.9 ? "auto" : "none";
+      leinwand.current.style.visibility = wechsel > 0.001 ? "visible" : "hidden";
+      leinwand.current.style.opacity = wechsel.toFixed(3);
+      leinwand.current.style.pointerEvents = istFrei ? "auto" : "none";
     }
-    if (hinweis.current) hinweis.current.style.opacity = glatt((p - 0.86) / 0.06).toFixed(3);
+    if (hinweis.current) hinweis.current.style.opacity = glatt((p - P.frei + 0.02) / 0.05).toFixed(3);
 
     // Bildunterschriften
     TEXTE.forEach((t, i) => {
@@ -267,7 +295,7 @@ function ScrollFahrt() {
         scrollTrigger: {
           trigger: bereich.current,
           start: "top 56px",
-          end: "+=480%",
+          end: "+=420%",
           scrub: 0.8,
           pin: true,
           anticipatePin: 1,
@@ -287,24 +315,52 @@ function ScrollFahrt() {
       <Karte svgRef={svg} />
 
       {/* Lageplan, Nymphäum in der Bildmitte */}
-      <div ref={plan} className="invisible absolute inset-0 bg-white" style={{ clipPath: "circle(0% at 50% 50%)" }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+      <div ref={plan} className="invisible absolute inset-0 bg-white" style={{ maskImage: "radial-gradient(circle, #000 0%, transparent 0%)" }}>
+        <div
           ref={planBild}
-          src={LAGEPLAN.src}
-          alt="Lageplan von Genazzano mit dem Nymphäum am Fluss"
-          width={LAGEPLAN.b}
-          height={LAGEPLAN.h}
-          className="absolute left-1/2 top-1/2 h-[230%] w-auto max-w-none"
-          style={{ transformOrigin: `${LAGEPLAN.nx * 100}% ${LAGEPLAN.ny * 100}%`, transform: `translate(-${LAGEPLAN.nx * 100}%, -${LAGEPLAN.ny * 100}%)` }}
-          loading="lazy"
-          decoding="async"
-        />
+          className="absolute left-1/2 top-1/2 h-[230%]"
+          style={{
+            aspectRatio: `${LAGEPLAN.b} / ${LAGEPLAN.h}`,
+            transformOrigin: `${LAGEPLAN.nx * 100}% ${LAGEPLAN.ny * 100}%`,
+            transform: `translate(-${LAGEPLAN.nx * 100}%, -${LAGEPLAN.ny * 100}%)`,
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={LAGEPLAN.src}
+            alt="Lageplan von Genazzano mit dem Nymphäum am Fluss"
+            className="absolute inset-0 h-full w-full"
+            loading="lazy"
+            decoding="async"
+          />
+          {/* Rund um das Nymphäum: hochaufgelöster Ausschnitt, damit der Zoom scharf bleibt */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={DETAIL.src}
+            alt=""
+            className="absolute"
+            style={{
+              left: `${(DETAIL.x0 / LAGEPLAN.b) * 100}%`,
+              top: `${(DETAIL.y0 / LAGEPLAN.h) * 100}%`,
+              width: `${(DETAIL.groesse / LAGEPLAN.b) * 100}%`,
+              height: `${(DETAIL.groesse / LAGEPLAN.h) * 100}%`,
+            }}
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
       </div>
 
       {/* 3D-Modell */}
       <div ref={leinwand} className="invisible absolute inset-0 cursor-grab active:cursor-grabbing">
-        <Modell3D ref={modell} src={MODELL} className="h-full w-full" onBereit={() => zeigen(stand.current)} />
+        <Modell3D
+          ref={modell}
+          src={MODELL}
+          planSrc={DETAIL.src}
+          className="h-full w-full"
+          onBereit={() => zeigen(stand.current)}
+          onAnsicht={setDraufsicht}
+        />
       </div>
 
       {/* Rahmen: Titelzeile oben links, Maßstab unten rechts */}
@@ -324,7 +380,8 @@ function ScrollFahrt() {
             ref={(el) => {
               texte.current[i] = el;
             }}
-            className="invisible absolute bottom-0 left-0 w-[min(28rem,80vw)] bg-papier/90 p-5 backdrop-blur-sm"
+            // Kein Kasten: Schrift steht frei, ein weicher Papier-Schein hält sie lesbar
+            className="invisible absolute bottom-0 left-0 w-[min(28rem,80vw)] [text-shadow:0_0_6px_var(--color-papier),0_0_14px_var(--color-papier),0_0_24px_var(--color-papier)]"
           >
             <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-akzent">{t.kicker}</p>
             <p className="mt-2 text-3xl font-medium tracking-tight">{t.titel}</p>
@@ -333,16 +390,23 @@ function ScrollFahrt() {
         ))}
       </div>
 
-      {/* Hinweis zum Drehen */}
-      <div
-        ref={hinweis}
-        className="pointer-events-none absolute bottom-8 right-8 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-grau opacity-0"
-      >
-        <svg width="22" height="14" viewBox="0 0 22 14" fill="none" aria-hidden="true" className="stroke-current">
-          <path d="M3 7c0-2.5 3.6-4.5 8-4.5s8 2 8 4.5-3.6 4.5-8 4.5" strokeWidth="1.2" />
-          <path d="M8.5 9.5 11 11.5 8.5 13.5" strokeWidth="1.2" />
-        </svg>
-        Ziehen zum Drehen
+      {/* Hinweis zum Drehen + Rückweg auf den Grundriss */}
+      <div ref={hinweis} className="absolute bottom-8 right-8 flex items-center gap-5 opacity-0">
+        <span className="pointer-events-none flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-grau">
+          <svg width="22" height="14" viewBox="0 0 22 14" fill="none" aria-hidden="true" className="stroke-current">
+            <path d="M3 7c0-2.5 3.6-4.5 8-4.5s8 2 8 4.5-3.6 4.5-8 4.5" strokeWidth="1.2" />
+            <path d="M8.5 9.5 11 11.5 8.5 13.5" strokeWidth="1.2" />
+          </svg>
+          Ziehen zum Drehen
+        </span>
+        <button
+          type="button"
+          disabled={!frei}
+          onClick={() => modell.current?.fahreZu(draufsicht ? "schraeg" : "draufsicht")}
+          className="border border-tinte/70 bg-papier/80 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.2em] transition-colors hover:border-akzent hover:text-akzent disabled:pointer-events-none"
+        >
+          {draufsicht ? "3D-Ansicht" : "Draufsicht"}
+        </button>
       </div>
     </section>
   );
@@ -402,7 +466,18 @@ function Bildfolge() {
       </figure>
       <figure>
         <div className="relative aspect-[4/5] bg-papier">
-          <Modell3D ref={modell} src={MODELL} className="absolute inset-0" onBereit={() => modell.current?.setWachstum(1)} />
+          <Modell3D
+            ref={modell}
+            src={MODELL}
+            planSrc={DETAIL.src}
+            className="absolute inset-0"
+            onBereit={() => {
+              const m3 = modell.current;
+              m3?.setWachstum(1);
+              m3?.setNeigung(1);
+              m3?.setFrei(true);
+            }}
+          />
         </div>
         <figcaption className="mt-4 px-4">
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-akzent">{TEXTE[3].kicker}</p>
